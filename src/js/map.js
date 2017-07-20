@@ -1,68 +1,8 @@
 // Constants
 var WIKI_EXTRACT_BASE_QUERY = "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&exsentences=2&exlimit=1&explaintext=true&titles=";
 
-// Neighborhood locations
-var locations = [
-    {
-        title: 'Lal Bagh',
-        position: {
-            lat: 12.9507 ,
-            lng: 77.5848
-        }
-    },
-    {
-        title: 'UB City',
-        position: {
-            lat: 12.9719 ,
-            lng: 77.5962
-        }
-    },
-    {
-        title: 'M. Chinnaswamy Stadium',
-        position: {
-            lat: 12.9790 ,
-            lng: 77.5994
-        }
-    },
-    {
-        title: 'Vidhana Soudha',
-        position: {
-            lat: 12.9765,
-            lng: 77.5888
-        }
-    },
-    {
-        title: 'Nehru Planetarium',
-        position: {
-            lat: 12.9849 ,
-            lng: 77.5896
-        }
-    },
-    {
-        title: 'Bangalore Fort',
-        position: {
-            lat: 12.9629,
-            lng: 77.5761
-        }
-    },
-    {
-        title: 'Hard Rock Cafe',
-        position: {
-            lat: 12.9762,
-            lng: 77.6016
-        }
-    }
-];
-
 var map;
-
 var infoWindow;
-// HTML structure of infowindow content corresponding to each location marker
-var infoWindowContent =
-    '<div id = "info-window">' +
-    '<h4 id = "infowin-title"></h4>' +
-    '<p id = "infowin-extract"></p>' +
-    '</div>';
 
 // Default marker icon
 var defaultIcon;
@@ -77,10 +17,8 @@ var initMap = function() {
         zoom: 13
     });
 
-    // Create infowindow with HTML structure 'infoWindowContent'
-    infoWindow = new google.maps.InfoWindow({
-        content: infoWindowContent
-    });
+    // Create infowindow
+    infoWindow = new google.maps.InfoWindow({});
 
     // Add listener to clear the marker on infowindow close
     infoWindow.addListener('closeclick', function() {
@@ -96,6 +34,11 @@ var initMap = function() {
 
     // Activate knockout
     ko.applyBindings(new LocationsViewModel());
+};
+
+// Map error
+var mapError = function() {
+    document.getElementById('map').innerHTML = "Error loading Map!";
 };
 
 // Resize Function
@@ -144,7 +87,7 @@ var bounceMarker = function(marker) {
     marker.setAnimation(google.maps.Animation.BOUNCE);
     setTimeout(function() {
         marker.setAnimation(null);
-    }, 800);
+    }, 700);
 };
 
 // Show infowindow containing the title and wikipedia information of the location
@@ -184,36 +127,30 @@ var loadWikiInfo = function(marker) {
     // Wikipedia Api
     var wikiURL = WIKI_EXTRACT_BASE_QUERY + marker.title;
 
-    // Handle wikipedia Api request timeout
-    var wikiRequestTimeout = setTimeout(function() {
-        document.getElementById('infowin-title').innerHTML = marker.title;
-        document.getElementById('infowin-extract').innerHTML = "Failed to load the wikipedia information";
-        infoWindow.open(map, marker);
-    }, 8000);
-
     // Invoke wikipedi API to fetch the information for the location
     $.ajax({
         url:wikiURL,
         dataType:"jsonp",
+        timeout: 10000,
         success:function(data) {
             if (data && data.query && data.query.pages) {
                 var pages = data.query.pages;
                 for (var pageid in pages) {
-                    infoWindow.open(map, marker);
-                    document.getElementById('infowin-title').innerHTML = marker.title;
-                    document.getElementById('infowin-extract').innerHTML = pages[pageid].extract;
+                    infoWindow.setContent(
+                        '<h4>' + marker.title + '</h4>' +
+                        '<p>' + pages[pageid].extract + '</p>');
                 }
             }
             else {
-                document.getElementById('infowin-title').innerHTML = marker.title;
+                infoWindow.setContent('<h4>' + marker.title + '</h4>');
                 // No record fetched from wiki
             }
             infoWindow.open(map, marker);
-            clearTimeout(wikiRequestTimeout);
         },
-        error: function (data) {
-            document.getElementById('infowin-title').innerHTML = marker.title;
-            document.getElementById('infowin-extract').innerHTML = "Failed to load the wikipedia information";
+        error: function (jqXHR, textStatus, errorThrown) {
+            infoWindow.setContent(
+                '<h4>' + marker.title + '</h4>' +
+                '<p>' + errorThrown + ': Failed to load the wikipedia information</p>');
             infoWindow.open(map, marker);
         }
     });

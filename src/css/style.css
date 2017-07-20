@@ -48,8 +48,8 @@
 }
 
 #toggle-left-navigation {
-    font-size:30px;
-    cursor:pointer;
+    font-size: 30px;
+    cursor: pointer;
     padding: 8px;
     color: #818181;
     background-color: #111;
@@ -69,6 +69,7 @@
     top: 50px;
     right: 0px;
     bottom: 0px;
+    text-align: center;
 }
 
 @media screen and (max-width: 320px) {
@@ -76,4 +77,3 @@
         font-size: 20px;
     }
 }
-

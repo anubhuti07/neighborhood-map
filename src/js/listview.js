@@ -53,7 +53,7 @@ var LocationsViewModel = function() {
              * visible markers.
              */
             self.locationMarkers.forEach(function(marker) {
-                if (stringStartsWith(marker.title.toLowerCase(), filter)) {
+                if (marker.title.toLowerCase().indexOf(filter) != -1) {
                     showMarker(marker);
                     filteredMarkers.push(marker);
                 }
@@ -65,14 +65,6 @@ var LocationsViewModel = function() {
         }
     }, self);
  };
-
-// Checks if a string is prefix of another
-var stringStartsWith = function (string, startsWith) {
-    string = string || "";
-    if (startsWith.length > string.length)
-        return false;
-    return string.substring(0, startsWith.length) === startsWith;
-};
 
 // Visibility status of left navigation bar containing the locations list
 var leftNavigationVisible = false;
