@@ -131,27 +131,29 @@ var loadWikiInfo = function(marker) {
     $.ajax({
         url:wikiURL,
         dataType:"jsonp",
-        timeout: 10000,
-        success:function(data) {
-            if (data && data.query && data.query.pages) {
-                var pages = data.query.pages;
-                for (var pageid in pages) {
-                    infoWindow.setContent(
-                        '<h4>' + marker.title + '</h4>' +
-                        '<p>' + pages[pageid].extract + '</p>');
-                }
+        timeout: 10000
+    })
+    .done(function(data) {
+        if (data && data.query && data.query.pages) {
+            var pages = data.query.pages;
+            for (var pageid in pages) {
+                infoWindow.setContent(
+                    '<h4>' + marker.title + '</h4>' +
+                    '<p>' + pages[pageid].extract + '</p>');
             }
-            else {
-                infoWindow.setContent('<h4>' + marker.title + '</h4>');
-                // No record fetched from wiki
-            }
-            infoWindow.open(map, marker);
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            infoWindow.setContent(
-                '<h4>' + marker.title + '</h4>' +
-                '<p>' + errorThrown + ': Failed to load the wikipedia information</p>');
-            infoWindow.open(map, marker);
         }
+        else {
+            infoWindow.setContent('<h4>' + marker.title + '</h4>');
+            // No record fetched from wiki
+        }
+        infoWindow.open(map, marker);
+    })
+    .fail(function (data, textStatus, errorThrown) {
+        infoWindow.setContent(
+            '<h4>' + marker.title + '</h4>' +
+            '<p> Error:' + data.status + '</p>' +
+             '<p> errorStatus:' + textStatus + '</p>' + 
+    		'<p> errorThrown:' + errorThrown + '</p>');
+        infoWindow.open(map, marker);
     });
 };
