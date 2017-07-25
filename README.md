@@ -1,4 +1,4 @@
-# Neighbourhood Map
+# Neighborhood Map
 
 ## Introduction
 
