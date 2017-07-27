@@ -11,10 +11,10 @@ Neighbourhood map is a single page web application based on MVVM (Model-View-Vie
 - Wikipedia API
 
 ## Repository Structure
-The repository contains dist, src and lib folders. 
-- lib: contains bootstrap, knockoutjs, jquery libraries and fonts.
-- src: contains the source code. 
+The repository contains dist, src and lib folders
+- lib: contains bootstrap, knockoutjs, jquery libraries and fonts
+- src: contains the source code 
 - dist: contains minified source code
     
 ## How to run
-Open main.html from src/dist.
+Open index.html or dist/index.html
